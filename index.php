@@ -7,7 +7,10 @@ include 'config.php';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SPLACE BPO</title>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Splace BP </title>
+
+    <link rel="icon" href="splacebpologo.png" type="image/x-icon">
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -45,8 +48,22 @@ include 'config.php';
             font-family: "Harabara Mais Demo", Sans-serif;
         }
 
-        .btn-talk, .btn-register {
-            background-color: #FF1F66;  /* Updated pink color */
+        .btn-register {
+            background-color: #C10149;
+            color: white !important;
+            padding: 12px 30px;         /* Adjusted padding */
+            border-radius: 30px;        /* Increased border radius */
+            text-decoration: none;
+            margin-left: 0.8rem;
+            font-size: 22px;            /* Adjusted font size */
+            font-weight: 400;
+            font-family: "Harabara Mais Demo", Sans-serif;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-talk{
+            background-color: #FF1F66;
             color: white !important;
             padding: 12px 30px;         /* Adjusted padding */
             border-radius: 30px;        /* Increased border radius */
@@ -95,10 +112,10 @@ include 'config.php';
                             <a class="nav-link" href="join-us.php">Join Us</a>
                         </li>
                         <li class="nav-item">
-                            <a class="btn-talk" href="contact.php">Let's Talk</a>
+                            <a class="btn-talk" href="contact.php">Register</a>
                         </li>
                         <li class="nav-item">
-                            <a class="btn-register" href="register.php">Register</a>
+                            <a class="btn-register" href="register.php">Log In</a>
                         </li>
                     </ul>
                 </div>
