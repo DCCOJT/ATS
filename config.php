@@ -1,13 +1,13 @@
 <?php
 $host = "localhost";
-$dbname = "ATS";
+$dbname = "ats";
 $username = "root";
 $password = "";
 
-$connection = mysqli_connect($host, $username, $password, $dbname);
+$conn = mysqli_connect($host, $username, $password, $dbname);
 
 
-if (!$connection) {
+if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());
 }
 ?>
