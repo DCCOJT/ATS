@@ -23,9 +23,19 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SPLACE BPO Dashboard</title>
+    <title>Splace BPO | Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
+    <!-- Favicon with multiple sizes -->
+    <link rel="icon" href="splacelogobpo.png" type="image/x-icon">
+
+    <link rel="preconnect" href="
+    <link rel=" preconnect" href="URL_ADDRESS.googleapis.com">
+    <link rel="preconnect" href="URL_ADDRESS.googleapis.com">
     <style>
         :root {
             --sidebar-width: 250px;
