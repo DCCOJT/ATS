@@ -143,9 +143,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             font-family: "Lexend", Sans-serif;
         }
 
-        .btn-applicantregister {
-            background-color: #C10149;
-            /* Updated pink color */
+        .btn-talk, .btn-register {
+            background-color: #FF1F66;  /* Updated pink color */
             color: white !important;
             padding: 12px 70px;
             /* Adjusted padding */
@@ -188,7 +187,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <a class="nav-link" href="join-us.php">Join Us</a>
                         </li>
                         <li class="nav-item">
-                            <a class="btn-applicantregister" href="applicantregistration.php">Applicant Registration</a>
+                            <a class="btn-talk" href="contact.php">Let's Talk</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn-register" href="register.php">Register</a>
                         </li>
                     </ul>
                 </div>
