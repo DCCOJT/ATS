@@ -158,7 +158,7 @@ include 'config.php';
                 </div>
                 
                 
-                <button type="submit" name="login" style="background-color: #ED025A; color: white; width: 100%; padding: 12px; border: none; border-radius: 30px; font-size: 18px; font-weight: 500; margin-bottom: 20px; cursor: pointer; font-family: 'Lexend', sans-serif;">Create My Account</button>
+                <button type="submit" name="login" style="background-color: #ED025A; color: white; width: 100%; padding: 12px; border: none; border-radius: 30px; font-size: 18px; font-weight: 500; margin-bottom: 20px; cursor: pointer; font-family: 'Lexend', sans-serif;">Create my Account</button>
                 
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <a href="index.php" style="color: #ED025A; text-decoration: none; font-size: 16px; font-family: 'Lexend', sans-serif; transition: color 0.3s ease;" onmouseover="this.style.color='#000000'" onmouseout="this.style.color='#ED025A'">Log In</a>

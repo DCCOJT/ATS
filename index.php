@@ -2,48 +2,50 @@
 include 'config.php';
 
 // Remember Me functionality
-function setRememberMeCookie($username) {
+function setRememberMeCookie($username)
+{
     $token = bin2hex(random_bytes(32)); // Generate secure token
     $expiry = time() + (30 * 24 * 60 * 60); // 30 days
-    
+
     // Store token in database
     global $conn;
     $stmt = $conn->prepare("UPDATE users SET remember_token = ? WHERE email = ?");
     $stmt->bind_param("ss", $token, $username);
     $stmt->execute();
-    
+
     // Set cookie
     setcookie("remember_me", $token, $expiry, "/");
 }
 
 // Lost Password functionality
-function sendPasswordResetLink() {
-    if(isset($_POST['email'])) {
+function sendPasswordResetLink()
+{
+    if (isset($_POST['email'])) {
         $email = $_POST['email'];
         global $conn;
-        
+
         // Check if email exists
         $stmt = $conn->prepare("SELECT user_id FROM users WHERE email = ?");
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $result = $stmt->get_result();
-        
-        if($result->num_rows > 0) {
+
+        if ($result->num_rows > 0) {
             $token = bin2hex(random_bytes(32));
             $expiry = date('Y-m-d H:i:s', time() + 3600); // 1 hour validity
-            
+
             // Store reset token
             $stmt = $conn->prepare("UPDATE users SET reset_token = ?, reset_expiry = ? WHERE email = ?");
             $stmt->bind_param("sss", $token, $expiry, $email);
             $stmt->execute();
-            
+
             // Send email with reset link
             $resetLink = "http://localhost/ATS/reset-password.php?token=" . $token;
             $to = $email;
             $subject = "Password Reset Request";
             $message = "Click the following link to reset your password: " . $resetLink;
             $headers = "From: noreply@splaceBPO.com";
-            
+
             mail($to, $subject, $message, $headers);
             return "Password reset link has been sent to your email.";
         }
@@ -53,14 +55,14 @@ function sendPasswordResetLink() {
 
 // Handle form submissions
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if(isset($_POST['login'])) {
+    if (isset($_POST['login'])) {
         // Handle login
-        if(isset($_POST['remember_me'])) {
+        if (isset($_POST['remember_me'])) {
             setRememberMeCookie($_POST['username']);
         }
     }
-    
-    if(isset($_POST['forgot_password'])) {
+
+    if (isset($_POST['forgot_password'])) {
         $resetMessage = sendPasswordResetLink();
     }
 }
@@ -86,7 +88,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="preconnect" href="URL_ADDRESS.googleapis.com">
 
     <style>
-        *{
+        * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -143,8 +145,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             font-family: "Lexend", Sans-serif;
         }
 
-        .btn-talk, .btn-register {
-            background-color: #FF1F66;  /* Updated pink color */
+        .btn-applicantregister {
+            background-color: #C10149;
+            /* Updated pink color */
             color: white !important;
             padding: 12px 70px;
             /* Adjusted padding */
@@ -187,10 +190,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <a class="nav-link" href="join-us.php">Join Us</a>
                         </li>
                         <li class="nav-item">
-                            <a class="btn-talk" href="contact.php">Let's Talk</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="btn-register" href="register.php">Register</a>
+                            <a class="btn-applicantregister" href="applicantregistration.php">Applicant Registration</a>
                         </li>
                     </ul>
                 </div>
@@ -201,37 +201,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <main>
         <div class="login-container" style="max-width: 510px; margin: 100px auto; padding: 40px 70px 70px 70px; background: white; border-radius: 20px; box-shadow: 0 0 20px rgba(0,0,0,0.1);">
             <img src="Group-65.png" alt="Splace Logo" style="width: 150px; display: block; margin: -10px auto 30px;">
-            
+
             <h1 style="color: #333; font-size: 40px; font-weight: 500; margin-bottom: 60px; text-align: center; font-family: 'Lexend', sans-serif;">Recruitment Login</h1>
-            
+
             <form action="login.php" method="POST">
                 <div class="mb-4">
                     <label style="color: #999; font-size: 16px; font-weight: bold; margin-bottom: 8px; display: block; font-family: 'Lexend', sans-serif;">Email</label>
                     <input type="email" name="email" class="form-control" style="padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; width: 100%;" required>
                 </div>
-                
+
                 <div class="mb-4">
                     <label style="color: #999; font-size: 16px; font-weight: bold; margin-bottom: 8px; display: block; font-family: 'Lexend', sans-serif;">Password</label>
                     <div style="position: relative;">
                         <input type="password" name="password" id="password" class="form-control" style="padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; width: 100%;" required>
                         <i class="toggle-password" onclick="togglePassword()" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #999;">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
-                                <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
-                                <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/>
+                                <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z" />
+                                <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0" />
                             </svg>
                         </i>
                     </div>
                 </div>
-                
+
                 <div class="mb-4">
                     <label style="color: #999; font-size: 16px; font-weight: bold; font-family: 'Lexend', sans-serif;">
                         <input type="checkbox" name="remember_me" style="margin-right: 8px;">
                         Remember Me
                     </label>
                 </div>
-                
-                <button type="submit" name="login" style="background-color: #ED025A; color: white; width: 100%; padding: 12px; border: none; border-radius: 30px; font-size: 18px; font-weight: 500; margin-bottom: 20px; cursor: pointer; font-family: 'Lexend', sans-serif;">Log In</button>
-                
+
+                <button type="submit" style="background-color: #ED025A; color: white; width: 100%; padding: 12px; border: none; border-radius: 30px; font-size: 18px; font-weight: 500; margin-bottom: 20px; cursor: pointer; font-family: 'Lexend', sans-serif;">Log In</button>
+
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <a href="#" onclick="forgotPassword(event)" style="color: #ED025A; text-decoration: none; font-size: 16px; font-family: 'Lexend', sans-serif; transition: color 0.3s ease;" onmouseover="this.style.color='#000000'" onmouseout="this.style.color='#ED025A'">Lost Password</a>
                     <a href="register.php" style="color: #ED025A; text-decoration: none; font-size: 16px; font-family: 'Lexend', sans-serif; transition: color 0.3s ease;" onmouseover="this.style.color='#000000'" onmouseout="this.style.color='#ED025A'">Register</a>
@@ -239,26 +239,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </form>
 
             <script>
-            function forgotPassword(e) {
-                e.preventDefault();
-                const email = prompt("Please enter your email address:");
-                if (email) {
-                    const form = document.createElement('form');
-                    form.method = 'POST';
-                    form.innerHTML = `
+                function forgotPassword(e) {
+                    e.preventDefault();
+                    const email = prompt("Please enter your email address:");
+                    if (email) {
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.innerHTML = `
                         <input type="hidden" name="email" value="${email}">
                         <input type="hidden" name="forgot_password" value="1">
                     `;
-                    document.body.appendChild(form);
-                    form.submit();
+                        document.body.appendChild(form);
+                        form.submit();
+                    }
                 }
-            }
             </script>
             <script>
                 function togglePassword() {
                     const passwordInput = document.getElementById('password');
                     const icon = document.querySelector('.toggle-password');
-                    
+
                     if (passwordInput.type === 'password') {
                         passwordInput.type = 'text';
                         icon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-eye-slash" viewBox="0 0 16 16">
@@ -277,7 +277,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </script>
         </div>
     </main>
-        
+
     <!-- Bootstrap 5 JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
