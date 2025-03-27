@@ -324,6 +324,7 @@ $conn->close();
     setInterval(updateClock, 1000);
 </script>
         <div class="nav-item" onclick="window.location.href='dashboard.php'"><i class="fas fa-home"></i> <span>Home</span></div>
+        <div class="nav-item" onclick="window.location.href='profile.php'"><i class="fas fa-user"></i> <span>Profile</span></div>
         <div class="nav-item" onclick="window.location.href='inbox.php'"><i class="fas fa-inbox"></i> <span>Inbox</span></div>
         <div class="nav-item" onclick="window.location.href='applicants-list.php'"><i class="fas fa-users"></i> <span>Applicants</span></div>
         <div class="nav-item" onclick="window.location.href='calendar.php'"><i class="fas fa-calendar"></i> <span>Calendar</span></div>
