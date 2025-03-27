@@ -14,7 +14,32 @@ $user_query = "SELECT * FROM users WHERE user_id = user_id";
 $user_result = $conn->query($user_query);
 $userData = mysqli_fetch_assoc($user_result);
 
-// Close the database connection
+// Get total applicants count
+$applicants_query = "SELECT COUNT(*) as total FROM applicants";
+$applicants_result = $conn->query($applicants_query);
+$applicants_count = $applicants_result->fetch_assoc()['total'];
+
+// Get monthly applicants data
+$monthly_applicants_query = "SELECT 
+    MONTH(application_date) as month, 
+    COUNT(*) as count 
+    FROM applicants 
+    WHERE YEAR(application_date) = YEAR(CURRENT_DATE())
+    GROUP BY MONTH(application_date)
+    ORDER BY month";
+$monthly_result = $conn->query($monthly_applicants_query);
+
+// Initialize array with zeros for all months
+$monthly_data = array_fill(1, 12, 0);
+
+// Fill in actual data
+while ($row = $monthly_result->fetch_assoc()) {
+    $monthly_data[$row['month']] = $row['count'];
+}
+
+// Convert to JavaScript array
+$monthly_json = json_encode(array_values($monthly_data));
+
 $conn->close();
 ?>
 
@@ -185,20 +210,122 @@ $conn->close();
             .sidebar {
                 width: var(--sidebar-collapsed-width);
             }}
+
+            :root {
+            --primary-color: #FF1F66;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            font-family: 'Lexend', sans-serif;
+        }
+
+        .container {
+            padding: 30px;
+        }
+
+        .applicants-table {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .table th i {
+            color: var(--primary-color);
+        }
+
+        .btn-approve {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 5px;
+            transition: opacity 0.3s;
+        }
+
+        .btn-approve:hover {
+            opacity: 0.9;
+            color: white;
+        }
+
+        .btn-disapprove {
+            background-color: #ff8fab;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 5px;
+            transition: opacity 0.3s;
+        }
+
+        .btn-disapprove:hover {
+            opacity: 0.9;
+            color: white;
+        }
+
+        .page-title {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+
+        .status-pending {
+            background-color: #ffd700;
+            color: #000;
+        }
+
+        .status-approved {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .status-disapproved {
+            background-color: #dc3545;
+            color: white;
+        }    
     </style>
 </head>
 <body>
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <img src="splacelogo.png" alt="Splace Logo">
-            <div class="welcome-text">
+            <div class="welcome-text" style="text-align: center; font-size: 18px;">
                 Welcome back<br>
-                <strong><?php echo isset($_SESSION['firstname']) ? $_SESSION['firstname'] : 'User'; ?></strong>
+                <strong>Recruitment</strong><br>
+                <div style="font-size: 16px; margin-top: 5px;">
+                    <?php 
+                    date_default_timezone_set('America/New_York');
+                    echo date('F j, Y'); ?>
+                    <div id="clock" style="margin-top: 5px; font-weight: 500;"></div>
+                </div>
             </div>
         </div>
+
+<!-- Add this JavaScript before the closing </body> tag -->
+<script>
+    function updateClock() {
+        const now = new Date();
+        const options = { 
+            hour: '2-digit', 
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: true
+        };
+        document.getElementById('clock').textContent = now.toLocaleTimeString('en-US', options);
+    }
+    
+    // Update clock immediately and then every second
+    updateClock();
+    setInterval(updateClock, 1000);
+</script>
         <div class="nav-item" onclick="window.location.href='dashboard.php'"><i class="fas fa-home"></i> <span>Home</span></div>
         <div class="nav-item" onclick="window.location.href='inbox.php'"><i class="fas fa-inbox"></i> <span>Inbox</span></div>
-        <div class="nav-item" onclick="window.location.href='applicants.php'"><i class="fas fa-users"></i> <span>Applicants</span></div>
+        <div class="nav-item" onclick="window.location.href='applicants-list.php'"><i class="fas fa-users"></i> <span>Applicants</span></div>
         <div class="nav-item" onclick="window.location.href='calendar.php'"><i class="fas fa-calendar"></i> <span>Calendar</span></div>
         <div class="nav-item" onclick="window.location.href='reports.php'"><i class="fas fa-chart-bar"></i> <span>Reports</span></div>
         <div class="nav-item" onclick="window.location.href='logout.php'"><i class="fas fa-sign-out"></i> <span>Log Out</span></div>
@@ -210,7 +337,7 @@ $conn->close();
                 <div class="col-md-3">
                     <div class="stats-card">
                         <h5><i class="fas fa-users me-2"></i>Applicants</h5>
-                        <div class="stats-number">4</div>
+                        <div class="stats-number"><?php echo $applicants_count; ?></div>
                     </div>
                 </div>
                 <div class="col-md-3">
@@ -303,24 +430,45 @@ $conn->close();
             });
 
             // Applicant Frequency Chart
+            // Update the monthly applicants query to use real-time data
             const frequencyCtx = document.getElementById('applicantFrequencyChart').getContext('2d');
-            new Chart(frequencyCtx, {
+            const applicantChart = new Chart(frequencyCtx, {
                 type: 'line',
                 data: {
                     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
                     datasets: [{
                         label: 'Applicants',
-                        data: [1, 2, 3, 2, 3, 4, 5, 4, 3, 2, 1, 1],
+                        data: <?php echo $monthly_json; ?>,
                         borderColor: '#FF1F66',
                         tension: 0.1
                     }]
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
                 }
             });
-
+            
+            // Add function to update chart
+            function updateApplicantChart() {
+                fetch('get_applicant_data.php')
+                    .then(response => response.json())
+                    .then(data => {
+                        applicantChart.data.datasets[0].data = data;
+                        applicantChart.update();
+                    });
+            }
+            
+            // Update chart every 5 seconds
+            setInterval(updateApplicantChart, 5000);
             // Qualification Status Chart
             const qualificationCtx = document.getElementById('qualificationChart').getContext('2d');
             new Chart(qualificationCtx, {
