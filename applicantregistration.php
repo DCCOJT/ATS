@@ -216,6 +216,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
 
                 <div class="mb-4">
+                    <label style="color: #666; font-size: 16px; font-weight: 500; margin-bottom: 8px; display: block;">Contact Number</label>
+                    <input type="tel" name="contact_number" class="form-control" style="padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px;" pattern="[0-9]{11}" required>
+                </div>
+
+                <div class="mb-4">
                     <label style="color: #666; font-size: 16px; font-weight: 500; margin-bottom: 8px; display: block;">Email Address</label>
                     <input type="email" name="email" class="form-control" style="padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px;" required>
                 </div>

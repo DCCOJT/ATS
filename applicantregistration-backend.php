@@ -25,6 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
     // Sanitize and get form data
     $firstname = mysqli_real_escape_string($conn, $_POST['firstname']);
     $lastname = mysqli_real_escape_string($conn, $_POST['lastname']);
+    $contact_number = mysqli_real_escape_string($conn, $_POST['contact_number']);
     $email = mysqli_real_escape_string($conn, $_POST['email']);
     $home = mysqli_real_escape_string($conn, $_POST['home']);
     $position = mysqli_real_escape_string($conn, $_POST['position']);
@@ -42,6 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
         $sql = "INSERT INTO disqualified_applicants (
             firstname,
             lastname,
+            contact_number,
             email,
             home_address,
             desired_position,
@@ -51,15 +53,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
             studying_status,
             application_date,
             status
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Disqualified')";
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         // Send disqualification email
         sendDisqualificationEmail($email, $firstname);
     } else {
         // Insert into regular applicants table
+        
         $sql = "INSERT INTO applicants (
             firstname,
             lastname,
+            contact_number,
             email,
             home_address,
             desired_position,
@@ -69,16 +73,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
             studying_status,
             application_date,
             status
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Qualified')";
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     }
     
     // Create prepared statement
     $stmt = $conn->prepare($sql);
     
     // Bind parameters
-    $stmt->bind_param("ssssssssss",
+    $stmt->bind_param("ssssssssssss",
         $firstname,
         $lastname,
+        $contact_number,
         $email,
         $home,
         $position,
@@ -86,7 +91,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
         $interview_type,
         $employment_status,
         $studying_status,
-        $application_date
+        $application_date,
+        $status
     );
     
     // Execute statement
