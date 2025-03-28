@@ -229,6 +229,7 @@ $conn->close();
                         <tr>
                             <th><i class="fas fa-user me-2"></i>Name</th>
                             <th><i class="fas fa-phone me-2"></i>Contact</th>
+                            <th><i class="fas fa-envelope me-2"></i>Email</th>
                             <th><i class="fas fa-map-marker-alt me-2"></i>Address</th>
                             <th><i class="fas fa-calendar me-2"></i>Actions</th>
                         </tr>
@@ -240,11 +241,13 @@ $conn->close();
                                     <a href="#" class="text-decoration-none" data-bs-toggle="modal" data-bs-target="#scheduleModal" 
                                        data-name="<?php echo htmlspecialchars($applicant['firstname'] . ' ' . $applicant['lastname']); ?>"
                                        data-contact="<?php echo htmlspecialchars($applicant['contact_number']); ?>"
+                                       data-email="<?php echo htmlspecialchars($applicant['email']); ?>"
                                        data-address="<?php echo htmlspecialchars($applicant['home_address']); ?>">
                                         <?php echo htmlspecialchars($applicant['firstname'] . ' ' . $applicant['lastname']); ?>
                                     </a>
                                 </td>
                                 <td><?php echo htmlspecialchars($applicant['contact_number']); ?></td>
+                                <td><?php echo htmlspecialchars($applicant['email']); ?></td>
                                 <td><?php echo htmlspecialchars($applicant['home_address']); ?></td>
                                 <td>
                                     <button class="btn btn-approve btn-sm" onclick="scheduleInterview(this)" 
@@ -272,7 +275,7 @@ $conn->close();
                     <div class="mb-3">
                         <p><strong>Complete Name: </strong><span id="modalName"></span></p>
                         <p><strong>Mobile Number: </strong><span id="modalContact"></span></p>
-                        <p><strong>Email: </strong><span id="email"></span></p>
+                        <p><strong>Email: </strong><span id="modalEmail"></span></p>
                         <p><strong>Current Address: </strong><span id="modalAddress"></span></p>
                     </div>
                     <div class="mb-3">
@@ -313,10 +316,12 @@ $conn->close();
             const name = button.getAttribute('data-applicant');
             const row = button.closest('tr');
             const contact = row.cells[1].textContent;
-            const address = row.cells[2].textContent;
+            const email = row.cells[2].textContent;
+            const address = row.cells[3].textContent;
             
             document.getElementById('modalName').textContent = name;
             document.getElementById('modalContact').textContent = contact;
+            document.getElementById('modalEmail').textContent = email;
             document.getElementById('modalAddress').textContent = address;
             
             const modal = new bootstrap.Modal(document.getElementById('scheduleModal'));
